@@ -35,7 +35,7 @@ model:
 batch_size: 2  # GPU belleğine göre ayarla
 val_batch_size: 2
 num_workers: 2  # DataLoader worker sayısı
-epochs: 50
+epochs: 10
 learning_rate: 0.001
 weight_decay: 0.00001
 
