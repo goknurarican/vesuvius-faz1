@@ -57,26 +57,30 @@ class VesuviusPatchDataset(Dataset):
         self.patch_positions = []
         self._prepare_patches()
 
-    def _load_volume(self, sample_id: str) -> Tuple[np.ndarray, np.ndarray]:
-        """CT volume ve maske yükle"""
-        if self.cache_volumes and sample_id in self.volume_cache:
-            return self.volume_cache[sample_id], self.mask_cache[sample_id]
+    def _load_volume(self, sample_id):
+        """
+        Kaggle Vesuvius Surface Det yapısına göre volume + mask yükler.
 
-        # CT volume yükle
-        ct_path = os.path.join(self.data_root, sample_id, 'ct.tif')
-        volume = tifffile.imread(ct_path).astype(np.float32)
+        sample_id: train_samples / val_samples içindeki ID
+                   (örn. 1004283650)
+        """
+        sid = str(sample_id)
 
-        # Binary maske yükle
-        mask_path = os.path.join(self.data_root, sample_id, 'mask.tif')
-        mask = tifffile.imread(mask_path).astype(np.float32)
+        # Örn: /kaggle/input/vesuvius-challenge-surface-detection/train_images/1004283650.tif
+        ct_path = os.path.join(self.data_root, "train_images", f"{sid}.tif")
+        mask_path = os.path.join(self.data_root, "train_labels", f"{sid}.tif")
 
-        # Cache'e ekle
-        if self.cache_volumes:
-            self.volume_cache[sample_id] = volume
-            self.mask_cache[sample_id] = mask
+        print(f"Loading sample {sid}")
+        print(f"  CT   : {ct_path}")
+        print(f"  Mask : {mask_path}", flush=True)
+
+        volume = tifffile.imread(ct_path).astype(np.float32)  # shape: [Z, H, W]
+        mask = tifffile.imread(mask_path).astype(np.float32)  # shape: [Z, H, W] veya [H,W]
+
+        # Maske >0 olan yerleri 1'e çek
+        mask = (mask > 0).astype(np.float32)
 
         return volume, mask
-
     def _prepare_patches(self):
         """Tüm olası patch pozisyonlarını hesapla"""
         for sample_id in self.sample_ids:

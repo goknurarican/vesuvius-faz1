@@ -7,11 +7,13 @@ experiment_name: "faz1_baseline"
 seed: 42
 
 # Data settings
-data_root: "/kaggle/input/vesuvius-dataset/train"  # Kaggle'da kullanılacak path
+data_root: "/kaggle/input/vesuvius-challenge-surface-detection"
+
+# train/val id olarak artık TIF dosya isimlerini kullanacağız:
+train_samples: [1004283650, 1006462223, 1013184726]
+val_samples:   [1059332280]
 # Lokal test için: data_root: "./data/vesuvius_mini/train"
 
-train_samples: ["sample_1", "sample_2"]  # Train sample ID'leri
-val_samples: ["sample_3"]  # Validation sample ID'leri
 
 # Patch settings
 patch_size: [64, 64, 64]  # D, H, W
