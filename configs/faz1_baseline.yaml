@@ -1,0 +1,75 @@
+# Vesuvius Faz 1 - Baseline Configuration
+
+# Experiment name
+experiment_name: "faz1_baseline"
+
+# Random seed for reproducibility
+seed: 42
+
+# Data settings
+data_root: "/kaggle/input/vesuvius-dataset/train"  # Kaggle'da kullanılacak path
+# Lokal test için: data_root: "./data/vesuvius_mini/train"
+
+train_samples: ["sample_1", "sample_2"]  # Train sample ID'leri
+val_samples: ["sample_3"]  # Validation sample ID'leri
+
+# Patch settings
+patch_size: [64, 64, 64]  # D, H, W
+patch_stride: [32, 64, 64]  # Z'de daha yoğun, XY'de daha seyrek
+val_patch_stride: [32, 64, 64]  # Validation için stride (aynı veya farklı olabilir)
+
+# Data processing
+normalize_method: "minmax"  # "minmax" veya "zscore"
+augment: true  # Data augmentation
+cache_volumes: true  # Volume'leri bellekte tut (hızlı ama RAM kullanır)
+
+# Model settings
+model:
+  base_channels: 16  # İlk katman kanal sayısı
+  num_levels: 4  # Downsampling seviye sayısı
+  bilinear: false  # Upsampling için bilinear interpolation
+
+# Training settings
+batch_size: 2  # GPU belleğine göre ayarla
+val_batch_size: 2
+num_workers: 2  # DataLoader worker sayısı
+epochs: 50
+learning_rate: 1e-3
+weight_decay: 1e-5
+
+# Loss settings
+bce_weight: 0.5
+dice_weight: 0.5
+
+# Optimizer and scheduler
+scheduler: "reduce"  # "reduce", "cosine", veya null
+scheduler_patience: 5  # ReduceLROnPlateau için
+
+# Training options
+gradient_clip: 1.0  # Gradient clipping (0 = disabled)
+log_interval: 50  # Her kaç batch'te bir log
+
+# Early stopping
+early_stopping_patience: 15  # null = disabled
+
+# Device
+device: "cuda"  # "cuda", "cpu", "mps", veya null (otomatik)
+
+# Output settings
+output_dir: "./outputs"
+
+# Resume training (optional)
+resume_checkpoint: null  # Checkpoint path veya null
+
+# Advanced settings (optional)
+# loss_config:  # CombinedLoss kullanmak istersen
+#   bce:
+#     weight: 0.3
+#     pos_weight: 2.0  # Class imbalance için
+#   dice:
+#     weight: 0.5
+#     smooth: 1e-6
+#   focal:
+#     weight: 0.2
+#     alpha: 0.25
+#     gamma: 2.0
